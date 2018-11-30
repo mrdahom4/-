@@ -755,5 +755,17 @@ client.on('message',function(message) {
    }
 });
 
+client.on('guildMemberAdd', member=> {
+    member.addRole(member.guild.roles.find("simo"));
+    });
+
+client.on('guildMemberAdd', member=> {
+    member.addRole(member.guild.roles.find("simo"));
+    });
+
+client.on('guildMemberAdd', member=> {
+    member.addRole(member.guild.roles.find("simo"));
+    });
+
 
 client.login(process.env.BOT_TOKEN);
