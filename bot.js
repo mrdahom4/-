@@ -456,63 +456,7 @@ client.on('message', message => {
 });
 
 
-client.on('message', async message =>{
-  if (message.author.boss) return;
 
-if (!message.content.startsWith(prefix)) return;
-	let command = message.content.split(" ")[0];
-	 command = command.slice(prefix.length);
-	let args = message.content.split(" ").slice(1);
-	if (command == "mute") {
-		if (!message.channel.guild) return;
-		if(!message.guild.member(message.author).hasPermission("MANAGE_MESSAGES")) return message.reply("انت لا تملك صلاحيات !! ").then(msg => msg.delete(5000));
-		if(!message.guild.member(client.user).hasPermission("MANAGE_MESSAGES")) return message.reply("البوت لايملك صلاحيات ").then(msg => msg.delete(5000));;
-		let user = message.mentions.users.first();
-		let muteRole = message.guild.roles.find("name", "Muted");
-		if (!muteRole) return message.reply("** لا يوجد رتبة الميوت 'Muted' **").then(msg => {msg.delete(5000)});
-		if (message.mentions.users.size < 1) return message.reply('** يجب عليك المنشن اولاً **').then(msg => {msg.delete(5000)});
-		let reason = message.content.split(" ").slice(2).join(" ");
-		message.guild.member(user).addRole(muteRole);
-		const muteembed = new Discord.RichEmbed()
-		.setColor("RANDOM")
-		.setAuthor(`Muted!`, user.displayAvatarURL)
-		.setThumbnail(user.displayAvatarURL)
-		.addField("**:busts_in_silhouette:  المستخدم**",  '**[ ' + `${user.tag}` + ' ]**',true)
-		.addField("**:hammer:  تم بواسطة **", '**[ ' + `${message.author.tag}` + ' ]**',true)
-		.addField("**:book:  السبب**", '**[ ' + `${reason}` + ' ]**',true)
-		.addField("User", user, true)
-		message.channel.send({embed : muteembed});
-		var muteembeddm = new Discord.RichEmbed()
-		.setAuthor(`Muted!`, user.displayAvatarURL)
-		.setDescription(`      
-${user} انت معاقب بميوت كتابي بسبب مخالفة القوانين
-${message.author.tag} تمت معاقبتك بواسطة
-[ ${reason} ] : السبب
-اذا كانت العقوبة عن طريق الخطأ تكلم مع المسؤلين
-`)
-		.setFooter(`في سيرفر : ${message.guild.name}`)
-		.setColor("RANDOM")
-	user.send( muteembeddm);
-  }
-if(command === `unmute`) {
-  if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.sendMessage("**ليس لديك صلاحية لفك عن الشخص ميوت**:x: ").then(m => m.delete(5000));
-if(!message.guild.member(client.user).hasPermission("MANAGE_MESSAGES")) return message.reply("**ما عندي برمشن**").then(msg => msg.delete(6000))
-
-  let toMute = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
-  if(!toMute) return message.channel.sendMessage("**عليك المنشن أولاّ**:x: ");
-
-  let role = message.guild.roles.find (r => r.name === "Muted");
-  
-  if(!role || !toMute.roles.has(role.id)) return message.channel.sendMessage("**لم يتم اعطاء هذه شخص ميوت من الأساس**:x:")
-
-  await toMute.removeRole(role)
-  message.channel.sendMessage("**لقد تم فك الميوت عن شخص بنجاح**:white_check_mark:");
-
-  return;
-
-  }
-
-});
 
 
 var prefix = "$"
@@ -754,6 +698,62 @@ function play(guild, song) {
     serverQueue.textChannel.send(`بدء تشغيل : **${song.title}**`);
 }
 
+
+const ms = require("ms");
+  client.on("message", message => {
+ if(!message.channel.guild) return;  
+  if (message.author.bot) return;
+ 
+  let command = message.content.split(" ")[0];
+ 
+  if (message.content.split(" ")[0].toLowerCase() === prefix + "unmute") {
+        if (!message.member.hasPermission('MANAGE_ROLES')) return;
+  let user = message.mentions.users.first();
+  let modlog = client.channels.find('name', 'log');
+  let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'Muted');
+  if (!muteRole) return message.reply(" I Can’t Find 'Muted' Role ").catch(console.error).then(message => message.delete(4000))
+  if (message.mentions.users.size < 1) return message.reply(' Error : ``Mention a User``').catch(console.error).then(message => message.delete(4000))
+  if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return;
+ 
+  if (message.guild.member(user).removeRole(muteRole.id)) {
+      return message.reply("User Has Been UnMuted.").catch(console.error).then(message => message.delete(4000))
+  } else {
+    message.guild.member(user).removeRole(muteRole).then(() => {
+      return message.reply("User Has Been UnMuted.").catch(console.error).then(message => message.delete(4000))
+    });
+  }
+ 
+};
+ 
+});
+ 
+ 
+client.on('message',function(message) {
+ if(!message.channel.guild) return;    let messageArray = message.content.split(' ');
+    let muteRole =  message.guild.roles.find('name', 'Muted');
+    let muteMember = message.mentions.members.first();
+    let muteReason = messageArray[2];
+    let muteDuration = messageArray[3];
+ if (message.content.split(" ")[0].toLowerCase() === prefix + "mute") {
+           
+  if (message.author.bot) return;
+       if(!muteRole) return message.guild.createRole({name: 'Muted'}).then(message.guild.channels.forEach(chan => chan.overwritePermissions(muteRole, {SEND_MESSAGES:false,ADD_REACTIONS:false})));
+       if(!message.guild.member(message.author).hasPermission("MANAGE_ROLES")) return message.channel.send(' Error : You Need `` MANAGE_ROLES ``Permission ');
+       if(!message.guild.member(client.user).hasPermission("MANAGE_ROLES")) return message.channel.send(' Error : I Don’t Have `` MANAGE_ROLES ``Permission ');
+       if(!muteMember) return message.channel.send(' Error : ``Mention a User``').then(message => message.delete(4000))
+       if(!muteReason) return message.channel.send(' Error : ``Supply a Reason``').then(message => message.delete(4000))
+       if(!muteDuration) return message.channel.send(' Error : `` Supply Mute Time `` \n Ex: #mute @user reason 1m ').then(message => message.delete(4000))
+       if(!muteDuration.match(/[1-7][s,m,h,d,w]/g)) return message.channel.send(' Error : `` Invalid Mute Duration``').then(message => message.delete(4000))
+       message.channel.send(`${muteMember} Has Been Muted.`).then(message => message.delete(5000))
+       muteMember.addRole(muteRole);
+       muteMember.setMute(true)
+       .then(() => { setTimeout(() => {
+           muteMember.removeRole(muteRole)
+           muteMember.setMute(false)
+       }, mmss(muteDuration));
+       });
+   }
+});
 
 
 client.login(process.env.BOT_TOKEN);
