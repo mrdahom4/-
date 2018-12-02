@@ -878,7 +878,7 @@ const ms = require("ms");
  
 };
  
-});
+
  
  
 client.on('message',function(message) {
@@ -906,7 +906,6 @@ client.on('message',function(message) {
        }, mmss(muteDuration));
        });
    }
-});
 
 client.on('guildMemberAdd', member=> {
     member.addRole(member.guild.roles.find("simo"));
