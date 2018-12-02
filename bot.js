@@ -135,27 +135,7 @@ return;
 });
 
 
-      client.on('message', async message => {
-  if(message.content.startsWith(prefix + "voice")) {
-  if(!message.guild.member(message.author).hasPermissions('MANAGE_CHANNELS')) return message.reply(':x: **ليس لديك الصلاحيات الكافية**');
-  if(!message.guild.member(client.user).hasPermissions(['MANAGE_CHANNELS','MANAGE_ROLES_OR_PERMISSIONS'])) return message.reply(':x: **ليس معي الصلاحيات الكافية**');
-  var args = message.content.split(' ').slice(1).join(' ');
-  if(args && !args.includes(0)) return message.channel.send(':negative_squared_cross_mark: » فشل اعداد الروم الصوتي .. __يجب عليك كتابة 0 في اسم الروم__');
-  if(!args) args = `VoiceOnline: [ ${message.guild.members.filter(s => s.voiceChannel).size} ]`;
-  message.channel.send(':white_check_mark: » تم عمل الروم الصوتي بنجاح');
-  message.guild.createChannel(`${args.replace(0, message.guild.members.filter(s => s.voiceChannel).size)}`, 'voice').then(c => {
-    c.overwritePermissions(message.guild.id, {
-      CONNECT: false,
-      SPEAK: false
-    });
-    setInterval(() => {
-      c.setName(`${args.replace(0, message.guild.members.filter(s => s.voiceChannel).size)}`).catch(err => {
-        if(err) return;
-      });
-    },3000);
-  });
-  }
-});
+
  
 const devs = ['487727064192122880' , '' , '' , ''];
 const adminprefix = "*";
@@ -521,30 +501,7 @@ client.on('message',async message => {
 });
 
 
-client.on('message',async message => {
-    const moment = require('moment');
-const ms = require('ms')
-    var prefix = '' //بريفكس البوت
-  var time = moment().format('Do MMMM YYYY , hh:mm');
-  var room;
-  var title;
-  var duration;
-  var currentTime = new Date(),
-hours = currentTime.getHours() + 3 ,
-minutes = currentTime.getMinutes(),
-done = currentTime.getMinutes() + duration,
-seconds = currentTime.getSeconds();
-if (minutes < 10) {
-minutes = "0" + minutes;
-}
-var suffix = "AM";
-if (hours >= 12) {
-suffix = "PM";
-hours = hours - 12;
-}
-if (hours == 0) {
-hours = 12;
-}
+
  
   var filter = m => m.author.id === message.author.id;
   if(message.content.startsWith(prefix + "gstart")) {
@@ -613,8 +570,8 @@ hours = 12;
 
 
 
-const ms = require("ms");
-  client.on("message", message => {
+
+ client.on("message", message => {
  if(!message.channel.guild) return;  
   if (message.author.bot) return;
  
