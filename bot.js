@@ -468,7 +468,7 @@ client.on('message', message => {
            message.channel.send(mmmmEmbed)
 });
   }
-});
+
 
 client.on('message',async message => {
   if(message.content.startsWith("$voice")) {
