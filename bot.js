@@ -927,7 +927,7 @@ function play(guild, song) {
 	  client.on('message', message => {
         let args = message.content.split(" ").slice(1).join(" ")
         let men = message.mentions.users.first()
-        if(message.content.startsWith(prefix + "roll")){
+        if(message.content.startsWith(prefix + "role")){
             if(!args) return message.channel.send("الرجاء اختيار رقم")
             message.channel.send(Math.floor(Math.random() * args))
         }
