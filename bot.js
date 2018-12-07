@@ -230,16 +230,7 @@ client.on('message', message => {
      
   });
 
-client.on('guildMemberAdd', member => {
-  member.guild.fetchInvites().then(guildInvites => {
-    const ei = invites[member.guild.id];
-    invites[member.guild.id] = guildInvites;
-    const invite = guildInvites.find(i => ei.get(i.code).uses < i.uses);
-    const inviter = client.users.get(invite.inviter.id);
-    const logChannel = member.guild.channels.find(channel => channel.name === "simo");
-    logChannel.send(`Invited by: <@${inviter.id}>`);
-  });
-});
+
 
 const cuttweet = [
      'كت تويت ‏| تخيّل لو أنك سترسم شيء وحيد فيصبح حقيقة، ماذا سترسم؟',
@@ -276,11 +267,9 @@ const cuttweet = [
                 if(!message.channel.guild) return message.reply('** This command only for servers**');
   var embed = new Discord.RichEmbed()
   .setColor('RANDOM')
-   .setThumbnail(message.author.avatarURL) 
  .addField('لعبه كت تويت' ,
   `${cuttweet[Math.floor(Math.random() * cuttweet.length)]}`)
   message.channel.sendEmbed(embed);
-  console.log('[id] Send By: ' + message.author.username)
     }
 });
 
@@ -342,7 +331,6 @@ const zead = [
   .setTitle("لعبة مريم ..")
   .setColor('RANDOM')
   .setDescription(`${zead[Math.floor(Math.random() * zead.length)]}`)
-  .setImage("https://www.npa-ar.com/wp-content/uploads/2017/08/%D9%84%D8%B9%D8%A8%D8%A9-%D9%85%D8%B1%D9%8A%D9%85-300x200.jpg")
    message.channel.sendEmbed(mariam);
    message.react("??")
   }
@@ -369,11 +357,9 @@ const secreT = [
   var embed = new Discord.RichEmbed()
   .setColor('RANDOM')
 
-   .setThumbnail(message.author.avatarURL) 
+ 
  .addField('لعبه خواطر' ,
   `${secreT[Math.floor(Math.random() * secreT.length)]}`)
-  message.channel.sendEmbed(embed);
-  console.log('[id] Send By: ' + message.author.username)
     }
 });
 
@@ -585,7 +571,7 @@ return;
 });
 
 
-var prefix = "$"
+
 client.on('message', msg => {
   if (msg.author.bot) return;
   if (!msg.content.startsWith(prefix)) return;
@@ -702,7 +688,7 @@ client.on('message', message => {
       var IzRo = new Discord.RichEmbed()
       .setThumbnail(message.author.iconURL)
       .setFooter(message.author.username, message.author.avatarURL)
-      .setTitle(' عدد اعضاء السيرفر  ')
+      .setTitle(' عدد اعضاء السيرفر')
       .addBlankField(true)
       .addField('.',`${message.guild.memberCount}`)
       message.channel.send(IzRo);
