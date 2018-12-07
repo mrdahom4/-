@@ -61,31 +61,13 @@ client.on('ready', () => { //code bot not leave room voice //Bot Is Online
 
 
 
-client.on('guildMemberAdd', member => { //LAST CODES -HONRAR-
-  member.guild.fetchInvites().then(guildInvites => {
-    const ei = invites[member.guild.id];
-    const invite = guildInvites.find(i => ei.get(i.code).uses < i.uses);
-    const inviter = client.users.get(invite.inviter.id);
-    const stewart = member.guild.channels.find("simo", "welcome");
-     stewart.send(`<@${member.user.id}> تمت الدعوه من <@${inviter.id}>`);
-   //  stewart.send(`<@${member.user.id}> joined using invite code ${invite.code} from <@${inviter.id}>. Invite was used ${invite.uses} times since its creation.`);
-  });
-})
 
 
- client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.find('simo');
-  if (!channel) return;
-  channel.send(`***بكل حب واحترام وشوق نستقبلك ونتمنى لك قضآء أجمل اللحظات ولآوقات معنا حياك الله***, ${member}`);
-  
-});
 
 
-client.on("guildMemberAdd", member => {
-    member.createDM().then(function (channel) {
-        return channel.send(`**Welcome to Simo Network**`) 
-    }).catch(console.error)
-})
+
+
+
 
 
 client.on('message', message => {
@@ -542,6 +524,65 @@ client.on('message', message => {
    });
 
 
+ client.on("message", async message => {
+            if(!message.channel.guild) return;
+            var prefix = "-";
+        if(message.content.startsWith(prefix + 'invites')) {
+        var nul = 0
+        var guild = message.guild
+        await guild.fetchInvites()
+            .then(invites => {
+             invites.forEach(invite => {
+                if (invite.inviter === message.author) {
+                     nul+=invite.uses
+                    }
+                });
+            });
+          if (nul > 0) {
+              console.log(`\n${message.author.tag} has ${nul} invites in ${guild.name}\n`)
+              var embed = new Discord.RichEmbed()
+                  .setColor("#000000")
+                    .addField(`${message.author.username}`, `لقد قمت بدعوة **${nul}** شخص`)
+                          message.channel.send({ embed: embed });
+                      return;
+                    } else {
+                       var embed = new Discord.RichEmbed()
+                        .setColor("#000000")
+                        .addField(`${message.author.username}`, `لم تقم بدعوة أي شخص لهذة السيرفر`)
+
+                       message.channel.send({ embed: embed });
+                        return;
+                    }
+        }
+        if(message.content.startsWith(prefix + 'invite-codes')) {
+let guild = message.guild
+var codes = [""]
+message.channel.send(":postbox: **لقد قمت بأرسال جميع روابط الدعوات التي قمت بأنشائها في الخاص**")
+guild.fetchInvites()
+.then(invites => {
+invites.forEach(invite => {
+if (invite.inviter === message.author) {
+codes.push(`discord.gg/${invite.code}`)
+}
+})
+}).then(m => {
+if (codes.length < 0) {
+    var embed = new Discord.RichEmbed()
+.setColor("#000000")
+.addField(`Your invite codes in ${message.guild.name}`, `You currently don't have any active invites! Please create an invite and start inviting, then you will be able to see your codes here!`)
+message.author.send({ embed: embed });
+return;
+} else {
+    var embed = new Discord.RichEmbed()
+.setColor("#000000")
+.addField(`Your invite codes in ${message.guild.name}`, `Invite Codes:\n${codes.join("\n")}`)
+message.author.send({ embed: embed });
+return;
+}
+})
+}
+
+});
 
 
 var prefix = "$"
@@ -571,20 +612,7 @@ client.on('message', msg => {
 
 
 
-client.on('message', message => {
-   if(message.content.startsWith(prefix + "invites")) {
-    message.guild.fetchInvites().then(invs => {
-      let user = message.mentions.users.first() || message.author
-      let personalInvites = invs.filter(i => i.inviter.id === user.id);
-      let inviteCount = personalInvites.reduce((p, v) => v.uses + p, 0);
-               let mmmmEmbed = new Discord.RichEmbed()
-                         .setAuthor(client.user.username)
-                         .setThumbnail(message.author.avatarURL)
- .addField(` لقد قمت بدعوة :`, ` ${inviteCount} `)
-           .setFooter(`- Requested By: ${message.author.tag}`);
-           message.channel.send(mmmmEmbed)
-});
-  }
+
 
 
 client.on('message',async message => {
@@ -608,70 +636,7 @@ client.on('message',async message => {
 
 
  
-  var filter = m => m.author.id === message.author.id;
-  if(message.content.startsWith(prefix + "gstart")) {
  
-    if(!message.guild.member(message.author).hasPermission('MANAGE_GUILD')) return message.channel.send(':heavy_multiplication_x:| **يجب أن يكون لديك خاصية التعديل على السيرفر**');
-    message.channel.send(`:eight_pointed_black_star:| **Send Name channel For the Giveaway**`).then(msg => {
-      message.channel.awaitMessages(filter, {
-        max: 1,
-        time: 20000,
-        errors: ['time']
-      }).then(collected => {
-        let room = message.guild.channels.find('name' , collected.first().content);
-        if(!room) return message.channel.send(':heavy_multiplication_x:| **i Found It :(**');
-        room = collected.first().content;
-        collected.first().delete();
-        msg.edit(':eight_pointed_black_star:| **Time For The Giveaway**').then(msg => {
-          message.channel.awaitMessages(filter, {
-            max: 1,
-            time: 20000,
-            errors: ['time']
-          }).then(collected => {
-            if(!collected.first().content.match(/[1-60][s,m,h,d,w]/g)) return message.channel.send('**The Bot Not Support This Time**');
-            duration = collected.first().content
-            collected.first().delete();
-            msg.edit(':eight_pointed_black_star:| **Now send The Present **').then(msg => {
-              message.channel.awaitMessages(filter, {
-                max: 1,
-                time: 20000,
-                errors: ['time']
-              }).then(collected => {
-                title = collected.first().content;
-                collected.first().delete();
-                msg.delete();
-                message.delete();
-                try {
-                  let giveEmbed = new Discord.RichEmbed()
-                  .setDescription(`**${title}** \nReact With 🎉 To Enter! \nTime remaining : ${duration} \n **Created at :** ${hours}:${minutes}:${seconds} ${suffix}`)
-                  .setFooter(message.author.username, message.author.avatarURL);
-                  message.guild.channels.find("name" , room).send(' :heavy_check_mark: **Giveaway Created** :heavy_check_mark:' , {embed: giveEmbed}).then(m => {
-                     let re = m.react('🎉');
-                     setTimeout(() => {
-                       let users = m.reactions.get("🎉").users
-                       let list = users.array().filter(u => u.id !== m.author.id !== client.user.id);
-                       let gFilter = list[Math.floor(Math.random() * list.length) + 0]
-                       let endEmbed = new Discord.RichEmbed()
-                       .setAuthor(message.author.username, message.author.avatarURL)
-                       .setTitle(title)
-                       .addField('Giveaway Ended !🎉',`Winners : ${gFilter} \nEnded at :`)
-                       .setTimestamp()
-                     m.edit('** 🎉 GIVEAWAY ENDED 🎉**' , {embed: endEmbed});
-                    message.guild.channels.find("name" , room).send(`**Congratulations ${gFilter}! You won The \`${title}\`**` , {embed: {}})
-                }, ms(duration));
-            });
-                } catch(e) {
-                message.channel.send(`:heavy_multiplication_x:| **i Don't Have Prem**`);
-                  console.log(e);
-                }
-              });
-            });
-          });
-        });
-      });
-    });
-  }
-});
 
 
 
@@ -959,16 +924,13 @@ function play(guild, song) {
 
 
 
-client.on('guildMemberAdd', member=> {
-    member.addRole(member.guild.roles.find("simo"));
-    });
-
-client.on('guildMemberAdd', member=> {
-    member.addRole(member.guild.roles.find("simo"));
-    });
-
-client.on('guildMemberAdd', member=> {
-    member.addRole(member.guild.roles.find("simo"));
+	  client.on('message', message => {
+        let args = message.content.split(" ").slice(1).join(" ")
+        let men = message.mentions.users.first()
+        if(message.content.startsWith(prefix + "roll")){
+            if(!args) return message.channel.send("الرجاء اختيار رقم")
+            message.channel.send(Math.floor(Math.random() * args))
+        }
     });
 
 
